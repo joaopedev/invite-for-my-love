@@ -2,16 +2,30 @@
 
 import { useState } from "react";
 
+type ButtonPosition = {
+  top: string;
+  left: string;
+  right: string;
+  position: "absolute" | "fixed";
+};
+
 export default function Convite() {
   const [accepted, setAccepted] = useState(false);
-  const [noPos, setNoPos] = useState({ top: "0%", left: "auto", right: "0%" });
+  const [noPos, setNoPos] = useState<ButtonPosition>({
+    top: "0%",
+    left: "auto",
+    right: "0%",
+    position: "absolute", // começa absolute
+  });
   const [selectedDate, setSelectedDate] = useState("");
+  
 
   const handleNoClickAttempt = () => {
-    const randomTop = Math.floor(Math.random() * 70) + "%";
-    const randomLeft = Math.floor(Math.random() * 70) + "%";
-    setNoPos({ top: randomTop, left: randomLeft, right: "auto" });
-  };
+  const randomTop = Math.floor(Math.random() * 90) + "vh"; 
+  const randomLeft = Math.floor(Math.random() * 90) + "vw"; 
+  setNoPos({ top: randomTop, left: randomLeft, right: "auto", position: "fixed" });
+};
+
 
   const handleSubmit = async () => {
     if (!selectedDate) return;
@@ -29,7 +43,7 @@ export default function Convite() {
       {!accepted ? (
         <>
           <h1 className="text-4xl font-bold mb-10 text-pink-900 drop-shadow-md">
-            Quer jantar comigo? 💕
+            Ei Tata, quer jantar comigo? 💕
           </h1>
 
           {/* Botões lado a lado */}
@@ -42,9 +56,9 @@ export default function Convite() {
             </button>
 
             <button
-              onMouseDown={handleNoClickAttempt} // só ao tentar clicar
+              onMouseEnter={handleNoClickAttempt} // só ao tentar clicar
               style={{
-                position: "absolute",
+                position: noPos.position,
                 top: noPos.top,
                 left: noPos.left,
                 right: noPos.right,
@@ -82,7 +96,7 @@ export default function Convite() {
                   : "bg-white text-pink-900"
               }`}
             >
-              Sábado 30/08
+              Sexta 05/09
             </button>
             <button
               onClick={() => setSelectedDate("Domingo 31/08")}
@@ -92,7 +106,7 @@ export default function Convite() {
                   : "bg-white text-pink-900"
               }`}
             >
-              Domingo 31/08
+              Sábado 06/09
             </button>
           </div>
 
