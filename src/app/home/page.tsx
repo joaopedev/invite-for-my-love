@@ -15,25 +15,42 @@ export default function Convite() {
     top: "0%",
     left: "auto",
     right: "0%",
-    position: "absolute", // começa absolute
+    position: "absolute",
   });
   const [selectedDate, setSelectedDate] = useState("");
-  
+  const [selectedRestaurant, setSelectedRestaurant] = useState("La Cuchilla");
 
   const handleNoClickAttempt = () => {
-  const randomTop = Math.floor(Math.random() * 90) + "vh"; 
-  const randomLeft = Math.floor(Math.random() * 90) + "vw"; 
-  setNoPos({ top: randomTop, left: randomLeft, right: "auto", position: "fixed" });
-};
-
+    const randomTop = Math.floor(Math.random() * 90) + "vh";
+    const randomLeft = Math.floor(Math.random() * 90) + "vw";
+    setNoPos({
+      top: randomTop,
+      left: randomLeft,
+      right: "auto",
+      position: "fixed",
+    });
+  };
 
   const handleSubmit = async () => {
-    if (!selectedDate) return;
+    if (!selectedDate || !selectedRestaurant) return;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    await fetch("/api/sendMail", {
+    if (!apiUrl) {
+      console.error("API URL is not defined");
+      return;
+    }
+    await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ date: selectedDate }),
+      body: JSON.stringify({
+        date: selectedDate,
+        restaurant: selectedRestaurant,
+      }),
+    });
+
+    console.log("Email enviado com:", {
+      date: selectedDate,
+      restaurant: selectedRestaurant,
     });
     alert("Marcado então! 🎉");
   };
@@ -45,8 +62,6 @@ export default function Convite() {
           <h1 className="text-4xl font-bold mb-10 text-pink-900 drop-shadow-md">
             Ei Tata, quer jantar comigo? 💕
           </h1>
-
-          {/* Botões lado a lado */}
           <div className="flex justify-between w-80 relative">
             <button
               onClick={() => setAccepted(true)}
@@ -56,7 +71,7 @@ export default function Convite() {
             </button>
 
             <button
-              onMouseEnter={handleNoClickAttempt} // só ao tentar clicar
+              onMouseEnter={handleNoClickAttempt}
               style={{
                 position: noPos.position,
                 top: noPos.top,
@@ -72,7 +87,6 @@ export default function Convite() {
         </>
       ) : (
         <div className="flex flex-col items-center gap-6">
-          {/* Vídeo romântico do YouTube */}
           <div className="w-96 h-56 rounded-xl shadow-lg overflow-hidden">
             <iframe
               className="w-full h-full"
@@ -82,16 +96,14 @@ export default function Convite() {
               allowFullScreen
             ></iframe>
           </div>
-
-          {/* Escolha da data */}
           <h2 className="text-2xl font-semibold text-pink-900 drop-shadow-sm">
-            Escolha a data 💌
+            Escolhe a data 💌
           </h2>
           <div className="flex gap-4">
             <button
-              onClick={() => setSelectedDate("Sábado 30/08")}
+              onClick={() => setSelectedDate("Sexta 05/09")}
               className={`px-4 py-2 rounded-lg shadow-md ${
-                selectedDate === "Sábado 30/08"
+                selectedDate === "Sexta 05/09"
                   ? "bg-pink-500 text-white"
                   : "bg-white text-pink-900"
               }`}
@@ -99,9 +111,9 @@ export default function Convite() {
               Sexta 05/09
             </button>
             <button
-              onClick={() => setSelectedDate("Domingo 31/08")}
+              onClick={() => setSelectedDate("Sábado 06/09")}
               className={`px-4 py-2 rounded-lg shadow-md ${
-                selectedDate === "Domingo 31/08"
+                selectedDate === "Sábado 06/09"
                   ? "bg-pink-500 text-white"
                   : "bg-white text-pink-900"
               }`}
@@ -109,10 +121,24 @@ export default function Convite() {
               Sábado 06/09
             </button>
           </div>
+          <div className="mt-6">
+            <label className="block text-lg font-medium text-pink-900 mb-2">
+              Escolhe o restaurante 🍽️
+            </label>
+            <select
+              value={selectedRestaurant}
+              onChange={(e) => setSelectedRestaurant(e.target.value)}
+              className="px-4 py-2 rounded-lg shadow-md bg-white text-pink-900 border border-pink-400"
+            >
+              <option value="La Cuchilla">La Cuchilla</option>
+              <option value="Aloha Restaurante">Aloha Restaurant</option>
+              <option value="Mahai">Mahai</option>
+            </select>
+          </div>
 
           <button
             onClick={handleSubmit}
-            className="mt-4 px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-lg hover:bg-green-700"
+            className="mt-6 px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-lg hover:bg-green-700"
           >
             Confirmar escolha
           </button>
